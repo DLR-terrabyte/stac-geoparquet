@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import sys
+import json
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Iterable
@@ -109,6 +110,10 @@ class StacJsonBatch:
                         shapely.geometry.shape(asset_value["proj:geometry"]),
                         flavor="iso",
                     )
+
+            # Store assets as String as we have STAC items with different assets in a collection (e.g., polarizations)
+            if 'assets' in wkb_item: 
+                wkb_item['assets'] = json.dumps(wkb_item['assets'])
 
             wkb_items.append(wkb_item)
 

@@ -78,9 +78,13 @@ def convert_timestamp_columns(
 
 def _convert_single_timestamp_column(column: pa.Array) -> pa.TimestampArray:
     """Convert an individual timestamp column from string to a Timestamp type"""
-    return pa.array(
-        [ciso8601.parse_rfc3339(str(t)) for t in column], pa.timestamp("us", tz="UTC")
-    )
+    converted = []
+    for t in column: 
+        try:
+            converted.append(ciso8601.parse_rfc3339(str(t)))
+        except Exception as e: 
+            converted.append(None)
+    return pa.array(converted, pa.timestamp("us", tz="UTC"))
 
 
 def _is_bbox_3d(bbox_col: pa.Array) -> bool:
